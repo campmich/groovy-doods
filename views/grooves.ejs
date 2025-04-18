@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Grooves</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="funky-header">
+        <img src="/images/logo.png" alt="Groovy Doods Logo" class="logo">
+        <h2 class="tagline">The freshest takes. The grooviest doods.</h2>
+      
+        <button id="navToggle" class="hamburger">&#9776;</button>
+      
+        <nav id="mainNav">
+          <a href="/">Home</a> |
+          <a href="/grooves">User Grooves</a> |
+          <% if (user) { %>
+            <a href="/make">Make a Groove</a> |
+            <a href="/logout">Logout (<%= user.username %>)</a>
+          <% } else { %>
+            <a href="/login">Login</a> |
+            <a href="/register">Register</a>
+          <% } %>
+        </nav>
+      </header>
+
+  <h1>User Reviews</h1>
+
+  <% if (reviews.length === 0) { %>
+    <p>No grooves yet. Be the first to post one!</p>
+  <% } else { %>
+    <% reviews.forEach(r => { %>
+      <div class="review">
+        <img src="<%= r.image %>" alt="Album Art" class="album-art">
+        <div class="review-content">
+          <h3><%= r.album %></h3>
+          <p><strong>Artist:</strong> <%= r.artist %></p>
+          <p class="username-tag">Posted by <%= r.username || 'Unknown' %></p>
+
+          <p>
+            <strong>Rating:</strong>
+            <span class="record-rating-display">
+              <% for (let i = 1; i <= 5; i++) { 
+                   const faded = i <= r.rating ? '' : 'faded-record';
+              %>
+                <img src="/images/gold-record.png" alt="Gold Record" class="mini-record <%= faded %>">
+              <% } %>
+            </span>
+          </p>
+
+          <p><strong>Review:</strong> <%= r.review %></p>
+
+          <% if (user && (user.id === r.user_id || user.role === 'admin')) { %>
+            <div class="actions">
+              <form action="/delete/<%= r.id %>" method="POST" style="display:inline;">
+                <button type="submit">Trash It</button>
+              </form>
+              <form action="/edit/<%= r.id %>" method="GET" style="display:inline;">
+                <button type="submit">Change It</button>
+              </form>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    <% }) %>
+  <% } %>
+</body>
+</html>

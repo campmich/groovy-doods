@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Make a Groove</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="funky-header">
+        <img src="/images/logo.png" alt="Groovy Doods Logo" class="logo">
+        <h2 class="tagline">The freshest takes. The grooviest doods.</h2>
+      
+        <button id="navToggle" class="hamburger">&#9776;</button>
+      
+        <nav id="mainNav">
+          <a href="/">Home</a> |
+          <a href="/grooves">User Grooves</a> |
+          <% if (user) { %>
+            <a href="/make">Make a Groove</a> |
+            <a href="/logout">Logout (<%= user.username %>)</a>
+          <% } else { %>
+            <a href="/login">Login</a> |
+            <a href="/register">Register</a>
+          <% } %>
+        </nav>
+      </header>
+  <h1>Search for an Album</h1>
+  <div class="search-container">
+    <div class="search-wrapper">
+      <input type="text" id="albumSearch" placeholder="Search by album or artist" autocomplete="off" />
+      <button type="button" onclick="searchAlbums()">Search</button>
+      <div id="suggestions" class="suggestions-box"></div>
+    </div>
+  </div>
+
+  <div id="results"></div>
+
+  <form action="/make" method="POST" id="reviewForm" style="display:none;">
+    <input type="hidden" name="album" id="albumField">
+    <input type="hidden" name="artist" id="artistField">
+    <input type="hidden" name="image" id="imageField">
+
+    <h2>Write Your Review for <span id="selectedAlbumName"></span></h2>
+    <textarea name="review" placeholder="Your thoughts..." rows="5" cols="50" required></textarea><br><br>
+    <label>Rating:</label>
+<div class="record-rating">
+  <% for (let i = 1; i <= 5; i++) { %>
+    <img src="/images/gold-record.png" class="record" data-value="<%= i %>" alt="Gold Record">
+  <% } %>
+</div>
+<input type="hidden" name="rating" id="ratingInput" required>
+    <button type="submit">Groove it!</button>
+  </form>
+
+  <script>
+    async function searchAlbums() {
+      const query = document.getElementById('albumSearch').value;
+      const res = await fetch(`/search?q=${encodeURIComponent(query)}`);
+      const data = await res.json();
+
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = '';
+
+      data.albums.forEach(album => {
+        const div = document.createElement('div');
+        div.innerHTML = `
+            <img src="${album.image}" width="100"><br>
+            <strong>${album.name}</strong> by ${album.artist}<br>
+            <button class="select-button" onclick='selectAlbum(${JSON.stringify(album)})'>Select</button>
+        `;
+        resultsDiv.appendChild(div);
+      });
+    }
+
+    const input = document.getElementById('albumSearch');
+  const suggestionsBox = document.getElementById('suggestions');
+
+  input.addEventListener('keyup', async () => {
+    const query = input.value.trim();
+    if (query.length < 2) {
+      suggestionsBox.innerHTML = '';
+      return;
+    }
+
+    const res = await fetch(`/search?q=${encodeURIComponent(query)}`);
+    const data = await res.json();
+
+    suggestionsBox.innerHTML = data.albums.map(album => `
+      <div class="suggestion" onclick='selectAlbum(${JSON.stringify(album)})'>
+        <img src="${album.image}" width="50" style="vertical-align:middle; margin-right:10px;">
+        <strong>${album.name}</strong> by ${album.artist}
+      </div>
+    `).join('');
+  });
+
+  function selectAlbum(album) {
+    document.getElementById('albumField').value = album.name;
+    document.getElementById('artistField').value = album.artist;
+    document.getElementById('imageField').value = album.image;
+    document.getElementById('selectedAlbumName').innerText = `"${album.name}" by ${album.artist}`;
+    document.getElementById('reviewForm').style.display = 'block';
+    window.scrollTo(0, document.body.scrollHeight);
+    suggestionsBox.innerHTML = '';
+    input.value = album.name;
+  }
+
+    const recordImgs = document.querySelectorAll('.record');
+  const ratingInput = document.getElementById('ratingInput');
+
+  recordImgs.forEach(record => {
+    record.addEventListener('click', () => {
+      const value = record.getAttribute('data-value');
+      ratingInput.value = value;
+
+      recordImgs.forEach(r => {
+        const imgVal = r.getAttribute('data-value');
+        r.style.opacity = imgVal <= value ? '1' : '0.3';
+      });
+    });
+  });
+  </script>
+</body>
+</html>

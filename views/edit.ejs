@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Groove</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h1>Edit Groove for "<%= review.album %>"</h1>
+  
+    <form action="/edit/<%= review.id %>" method="POST">
+      <p><strong>Artist:</strong> <%= review.artist %></p>
+      <p><strong>Album:</strong> <%= review.album %></p>
+      <p><img src="<%= review.image %>" width="150"></p>
+  
+      <label for="review">Edit Your Review:</label><br>
+      <textarea name="review" rows="5" cols="50" required><%= review.review %></textarea><br><br>
+  
+      <label>Rating:</label>
+      <div class="record-rating">
+        <% for (let i = 1; i <= 5; i++) { %>
+          <img src="/images/gold-record.png" class="record" data-value="<%= i %>" alt="Gold Record">
+        <% } %>
+      </div>
+      <input type="hidden" name="rating" id="ratingInput" value="<%= review.rating %>" required>
+  
+      <button type="submit">Save Changes</button>
+    </form>
+  
+    <p><a href="/grooves">Cancel</a></p>
+  
+    <script>
+      const records = document.querySelectorAll('.record');
+      const ratingInput = document.getElementById('ratingInput');
+      const currentRating = ratingInput.value;
+  
+      function updateRecordDisplay(value) {
+        records.forEach(record => {
+          const val = record.getAttribute('data-value');
+          record.style.opacity = val <= value ? '1' : '0.3';
+        });
+      }
+  
+      records.forEach(record => {
+        record.addEventListener('click', () => {
+          const value = record.getAttribute('data-value');
+          ratingInput.value = value;
+          updateRecordDisplay(value);
+        });
+      });
+  
+      // Initialize with existing rating
+      updateRecordDisplay(currentRating);
+    </script>
+  </body>
+  </html>

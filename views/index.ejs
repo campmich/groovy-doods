@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Groovy Doods</title>
+  <link href="/styles.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="funky-header">
+    <img src="/images/logo.png" alt="Groovy Doods Logo" class="logo">
+    <h2 class="tagline">The freshest takes. The grooviest doods.</h2>
+  
+    <button id="navToggle" class="hamburger">&#9776;</button>
+  
+    <nav id="mainNav">
+      <a href="/">Home</a> |
+      <a href="/grooves">User Grooves</a> |
+      <% if (user) { %>
+        <a href="/make">Make a Groove</a> |
+        <a href="/logout">Logout (<%= user.username %>)</a>
+      <% } else { %>
+        <a href="/login">Login</a> |
+        <a href="/register">Register</a>
+      <% } %>
+    </nav>
+  </header>
+
+  <main>
+    <div class="funky-hero">
+      <h1>Welcome to Groovy Doods!</h1>
+      <p>Share your hottest takes, rate albums with gold records, and vibe with music fans from all walks of life.</p>
+
+      <div class="animated-records">
+        <img src="/images/gold-record.png" alt="Record 1">
+        <img src="/images/gold-record.png" alt="Record 2">
+        <img src="/images/gold-record.png" alt="Record 3">
+      </div>
+    </div>
+  </main>
+
+<script>
+  const toggle = document.getElementById('navToggle');
+  const nav = document.getElementById('mainNav');
+
+  toggle.addEventListener('click', () => {
+    nav.classList.toggle('show');
+  });
+</script>
+</body>
+</html>
