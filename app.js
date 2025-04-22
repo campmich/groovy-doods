@@ -101,7 +101,7 @@ app.get('/grooves', (req, res) => {
   res.render('grooves', { reviews });
 });
 
-// Delete Groove (only owner or admin)
+// Delete Groove + misc. left over code from when I wanted to add an admin user (which continues below)
 app.post('/delete/:id', isLoggedIn, (req, res) => {
   const review = db.prepare('SELECT * FROM reviews WHERE id = ?').get(req.params.id);
   if (!review) return res.status(404).send('Not found');

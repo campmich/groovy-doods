@@ -5,10 +5,8 @@ let token = '';
 let tokenExpiresAt = 0;
 
 async function getSpotifyToken() {
-  // If token is still valid, return it
   if (token && Date.now() < tokenExpiresAt) return token;
 
-  // Otherwise, request a new one
   const response = await axios.post(
     'https://accounts.spotify.com/api/token',
     'grant_type=client_credentials',
